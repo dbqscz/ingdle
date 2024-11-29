@@ -14,7 +14,7 @@ let remainingChampions = [...champions]; // Copia da lista original
 let currentChampion;
 let correctGuesses = 0; // Contador de acertos
 
-// Seleciona um campeão aleatório
+
 function selectRandomChampion() {
     if (remainingChampions.length === 0) {
         feedback.textContent = "No more members left!";
@@ -29,7 +29,7 @@ function selectRandomChampion() {
     return champion;
 }
 
-// Inicializa o jogo
+
 function initGame() {
     if (correctGuesses >= 4) {
         feedback.textContent = "Game Over! You guessed 4 members correctly!";
@@ -51,14 +51,14 @@ function initGame() {
     }
 }
 
-// Elementos do DOM
+
 const input = document.getElementById("guess-input");
 const button = document.getElementById("submit-btn");
 const feedback = document.getElementById("feedback");
 const hint = document.getElementById("hint");
 const celebrationGif = document.getElementById("celebration-gif");
 
-// Lógica do jogo
+
 button.addEventListener("click", () => {
     const userGuess = input.value.trim();
     if (!userGuess) {
@@ -80,5 +80,5 @@ button.addEventListener("click", () => {
     input.value = "";
 });
 
-// Inicia o jogo ao carregar a página
+
 initGame();
