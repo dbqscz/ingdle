@@ -1,163 +1,84 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adivinhe os Kittens :></title>
+// Lista de integrantes e dicas correspondentes
+const champions = [
+    { name: "darlan", hint: "He is always number one!" },
+    { name: "vitoria", hint: "Your name is an achievement." },
+    { name: "rayane", hint: "She is very energetic." },
+    { name: "sarah", hint: "Your name is short and she used to have bangs." },
+    { name: "vivian", hint: "She owns a company." },
+    { name: "augusto", hint: "It's silly and bad-tempered." },
+    { name: "mavih", hint: "She is a good singer." },
+    { name: "aline", hint: "Wears braids and dances very well." },
+];
 
-    <!-- CSS Embutido -->
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #121212;
-            color: #fff;
-        }
+let remainingChampions = [...champions]; // Copia da lista original
+let currentChampion;
+let correctGuesses = 0; // Contador de acertos
 
-        .container {
-            text-align: center;
-            background: #1e1e1e;
-            padding: 20px;
-            border-radius: 10px;
-            width: 300px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
+// Seleciona um campeão aleatório
+function selectRandomChampion() {
+    if (remainingChampions.length === 0) {
+        feedback.textContent = "No more members left!";
+        hint.textContent = "";
+        input.disabled = true;
+        button.disabled = true;
+        return null;
+    }
+    const randomIndex = Math.floor(Math.random() * remainingChampions.length);
+    const champion = remainingChampions[randomIndex];
+    remainingChampions.splice(randomIndex, 1); // Remove da lista
+    return champion;
+}
 
-        input {
-            width: 80%;
-            padding: 10px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 5px;
-        }
+// Inicializa o jogo
+function initGame() {
+    if (correctGuesses >= 4) {
+        feedback.textContent = "Game Over! You guessed 4 members correctly!";
+        feedback.style.color = "gold";
+        hint.textContent = "";
+        input.disabled = true;
+        button.disabled = true;
+        celebrationGif.style.display = "block"; // Exibe o GIF ao finalizar
+        return;
+    }
+    currentChampion = selectRandomChampion();
+    if (currentChampion) {
+        hint.textContent = `Hint: ${currentChampion.hint}`;
+        feedback.textContent = "";
+        input.value = "";
+        input.disabled = false;
+        button.disabled = false;
+        celebrationGif.style.display = "none"; // Esconde o GIF ao iniciar
+    }
+}
 
-        button {
-            padding: 10px 20px;
-            border: none;
-            background-color: #5cdb5c;
-            color: #000;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 5px;
-        }
+// Elementos do DOM
+const input = document.getElementById("guess-input");
+const button = document.getElementById("submit-btn");
+const feedback = document.getElementById("feedback");
+const hint = document.getElementById("hint");
+const celebrationGif = document.getElementById("celebration-gif");
 
-        button:hover {
-            background-color: #45b345;
-        }
+// Lógica do jogo
+button.addEventListener("click", () => {
+    const userGuess = input.value.trim();
+    if (!userGuess) {
+        feedback.textContent = "Write a name!";
+        feedback.style.color = "orange";
+        return;
+    }
 
-        #feedback {
-            margin-top: 15px;
-            font-size: 14px;
-            font-weight: bold;
-        }
+    if (userGuess.toLowerCase() === currentChampion.name.toLowerCase()) {
+        correctGuesses++;
+        feedback.textContent = `Correct! You have guessed ${correctGuesses}/4 members.`;
+        feedback.style.color = "green";
+        celebrationGif.style.display = "block"; // Exibe o GIF
+        setTimeout(initGame, 3000); // Troca de integrante após 3 segundos
+    } else {
+        feedback.textContent = "Try again :(";
+        feedback.style.color = "red";
+    }
+    input.value = "";
+});
 
-        #hint {
-            margin-top: 10px;
-            font-size: 12px;
-            font-style: italic;
-            color: #bbb;
-        }
-
-        #celebration-gif {
-            margin-top: 20px;
-            max-width: 100%;
-            display: none; /* Esconde a imagem inicialmente */
-            border-radius: 10px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Guess</h1>
-        <p>Guess the name of the members!</p>
-        <div class="game-area">
-            <input type="text" id="guess-input" placeholder="Write the name of the members..." />
-            <button id="submit-btn">Submit</button>
-        </div>
-        <div id="feedback"></div>
-        <div id="hint"></div>
-        <img id="celebration-gif" src="celebration.gif" alt="Celebration"> <!-- Substitua 'celebration.gif' pelo caminho do seu GIF -->
-    </div>
-
-    <!-- JavaScript Embutido -->
-    <script>
-        // Lista de integrantes e dicas correspondentes
-        const champions = [
-            { name: "Darlan", hint: "Is the only man!" },
-            { name: "Vitória", hint: "Your name is an achievement." },
-            { name: "Rayane", hint: "She is very energetic." },
-            { name: "Sarah", hint: "Your name is short and she used to have bangs." },
-            { name: "Vivian", hint: "Your name starts with 'V' and she owns a company." }
-        ];
-
-        let remainingChampions = [...champions]; // Copia da lista original
-        let currentChampion;
-
-        // Seleciona um campeão aleatório
-        function selectRandomChampion() {
-            if (remainingChampions.length === 0) {
-                feedback.textContent = "Congratulations! You guessed all the members!";
-                feedback.style.color = "green";
-                hint.textContent = "";
-                input.disabled = true;
-                button.disabled = true;
-                celebrationGif.style.display = "none";
-                return null;
-            }
-            const randomIndex = Math.floor(Math.random() * remainingChampions.length);
-            const champion = remainingChampions[randomIndex];
-            remainingChampions.splice(randomIndex, 1); // Remove da lista
-            return champion;
-        }
-
-        // Inicializa o jogo
-        function initGame() {
-            currentChampion = selectRandomChampion();
-            if (currentChampion) {
-                hint.textContent = `Hint: ${currentChampion.hint}`;
-                feedback.textContent = "";
-                input.value = "";
-                input.disabled = false;
-                button.disabled = false;
-                celebrationGif.style.display = "none"; // Esconde o GIF ao iniciar
-            }
-        }
-
-        // Elementos do DOM
-        const input = document.getElementById("guess-input");
-        const button = document.getElementById("submit-btn");
-        const feedback = document.getElementById("feedback");
-        const hint = document.getElementById("hint");
-        const celebrationGif = document.getElementById("celebration-gif");
-
-        // Lógica do jogo
-        button.addEventListener("click", () => {
-            const userGuess = input.value.trim();
-            if (!userGuess) {
-                feedback.textContent = "Write a name!";
-                feedback.style.color = "orange";
-                return;
-            }
-
-            if (userGuess.toLowerCase() === currentChampion.name.toLowerCase()) {
-                feedback.textContent = "Congratulations! You got it right!";
-                feedback.style.color = "green";
-                celebrationGif.style.display = "block"; // Exibe o GIF
-                setTimeout(initGame, 3000); // Troca de integrante após 3 segundos
-            } else {
-                feedback.textContent = "Try again :(";
-                feedback.style.color = "red";
-            }
-            input.value = "";
-        });
-
-        // Inicia o jogo ao carregar a página
-        initGame();
-    </script>
-</body>
-</html>
+// Inicia o jogo ao carregar a página
+initGame();
